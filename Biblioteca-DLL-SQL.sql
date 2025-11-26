@@ -1,37 +1,47 @@
 CREATE DATABASE E_commerce;
 USE E_commerce;
-CREATE TABLE Contato(
-	id_contato INT ,
-    telefone VARCHAR(25),
-    constraint pk_contato PRIMARY KEY (id_contato)
-);
 
-CREATE TABLE Cliente(
-	cpf INT NOT NULL,
-    nome VARCHAR(50) NOT NULL,
+CREATE TABLE Cliente (
+    cpf BIGINT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
     rua VARCHAR(50),
+    numero VARCHAR(20),
     bairro VARCHAR(50),
-    numero VARCHAR(50),
     cidade VARCHAR(50),
-    estado VARCHAR(50),
-    id_contato INT,
-    CONSTRAINT pk_cliente PRIMARY KEY (cpf),
-    CONSTRAINT fK_contato FOREIGN KEY (id_contato) REFERENCES Contato (id_contato)
+    estado VARCHAR(2)
 );
 
-CREATE TABLE Livro(
-	isbn INT NOT NULL,
-    titulo varchar(50) NOT NULL,
-    autor varchar(50),
-    ano_publicado int,
-    preco REAL,
-    CONSTRAINT pk_livro PRIMARY KEY (isbn)
+CREATE TABLE Telefone (
+    id_telefone INT AUTO_INCREMENT PRIMARY KEY,
+    cpf_cliente BIGINT,
+    telefone VARCHAR(25) NOT NULL,
+    FOREIGN KEY (cpf_cliente) REFERENCES Cliente(cpf)
 );
 
-CREATE TABLE Pedido(
-	isbn int,
-	id_cliente int,
-    quantidade int default 1,
-    CONSTRAINT fk_cliente  FOREIGN KEY (id_cliente) REFERENCES Cliente (cpf),
-    CONSTRAINT fK_livro FOREIGN KEY (isbn) REFERENCES Livro (isbn)
+CREATE TABLE Livro (
+    isbn BIGINT PRIMARY KEY,
+    titulo VARCHAR(100) NOT NULL,
+    ano_publicado INT,
+    preco DECIMAL(10,2)
 );
+
+
+CREATE TABLE Pedido (
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    cpf_cliente BIGINT NOT NULL,
+    data_pedido DATETIME DEFAULT NOW(),
+    FOREIGN KEY (cpf_cliente) REFERENCES Cliente(cpf)
+);
+
+CREATE TABLE ItemPedido (
+    id_pedido INT,
+    isbn BIGINT,
+    quantidade INT DEFAULT 1,
+    
+    PRIMARY KEY (id_pedido, isbn),
+
+    FOREIGN KEY (id_pedido) REFERENCES Pedido(id_pedido),
+    FOREIGN KEY (isbn) REFERENCES Livro(isbn)
+);
+
+
